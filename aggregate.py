@@ -102,8 +102,12 @@ def aggregate(survey_dir, master_fp, out_fp, aggregate_dr):
 
                         # see if survey answer is a correct one
                         # if there are multiple diseases associated with an image, if a doctor has selected one of the
-                        # diseases as his answer, the answer is considered to be correct
-                        answer_correct = our_answer in correct_answers
+                        # diseases as his answer, the answer is considered to be correct (value 1), otherwise it can be
+                        # 'not_applicable' when an image is of insufficient quality (value 0) or incorrect (value 1)
+                        if our_answer == 'not_applicable':
+                            answer_correct = 0
+                        else:
+                            answer_correct = 1 if our_answer in correct_answers else -1
 
                         alterations.append({
                             "surveyID": int(s),
