@@ -26,6 +26,8 @@ def aggregate(survey_dir, master_fp, out_fp, aggregate_dr):
         `diabetic retinopathy`.
     :return: None
     """
+    print(">> Aggregating results data...")
+
     if aggregate_dr:
         print(">> An option to treat equally 'background_diabetic_retinopathy' and 'diabetic_retionopathy' is ENABLED.")
 
@@ -45,8 +47,6 @@ def aggregate(survey_dir, master_fp, out_fp, aggregate_dr):
     ])
 
     master = pd.read_csv(master_fp)
-
-    entry_id = 1
 
     for file in input_path.glob("*.json"):
 
@@ -91,7 +91,7 @@ def aggregate(survey_dir, master_fp, out_fp, aggregate_dr):
                         list(master[(master['survey_id'] == int(s)) & (master['question_id'] == int(q))].disease_token)
                         our_answer = entry[key]
 
-                        # it seems that background_diabetic_retinopathy is subtype or a synonim for diabetic_retinopathy
+                        # it seems that background_diabetic_retinopathy is subtype or a synonym for diabetic_retinopathy
                         # this is not verified at the moment, but this code piece is here to account on possibility that
                         # these two disease types should be treated as one
                         if aggregate_dr:
@@ -128,6 +128,7 @@ def aggregate(survey_dir, master_fp, out_fp, aggregate_dr):
 
     output.to_csv(out_fp, index=False)
     print(output)
+    print(">> Done.")
 
 
 if __name__ == '__main__':
