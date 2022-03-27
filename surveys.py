@@ -286,14 +286,26 @@ def aggregate(survey_dir, output_dir=None):
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    master = pd.read_csv(output_dir / "images.csv")
-    # aggregated_results = aggregated_results.set_index("img1").join(master.set_index("image_id"))
+    images = pd.read_csv(output_dir / "images.csv")
+    images.drop(["type"], axis=1)
 
     # make sure that both img1 and image_id columns are of the same type before dataframes are joined
-    aggregated_results = aggregated_results.astype({'img1': 'int32'})
-    master = master.astype({'id': 'int32'})
+    aggregated_results = aggregated_results.astype(
+        {
+            'img1': 'int32',
+            'img2': 'int32',
+            "answer": "int32"
+        }
+    )
+    images = images.astype({'id': 'int32'})
 
-    aggregated_results = aggregated_results.merge(master, how="left", left_on="img1", right_on="id")
+    aggregated_results = aggregated_results.merge(images, how="left", left_on="img1", right_on="id")
+    aggregated_results = aggregated_results.merge(images, how="left", left_on="img2", right_on="id",
+                                                  suffixes=("_img1", "_img2"))
+    aggregated_results = aggregated_results.merge(images, how="left", left_on="answer", right_on="id")
+    aggregated_results = aggregated_results.astype({'filename': 'str'})
+    print(type(re.match(r"(\d+)-(.+)-(chase|drive|stare).png", aggregated_results["filename"]).group(2)))
+    aggregated_results["network"] = "trt"
     aggregated_results.to_csv(output_dir / "survey2_data.csv")
 
 
