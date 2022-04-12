@@ -1,11 +1,14 @@
 import click
 import json
 import re
+
+import numpy as np
 import requests
 import pandas as pd
 
 from string import Template
 from pathlib import Path
+from votelib.evaluate.condorcet import Copeland
 
 
 get_survey_result_template = Template("https://api.surveyjs.io/private/Surveys/getSurveyResults/$id?accessKey=$access_key")
@@ -106,11 +109,14 @@ survey_ids = [
                                                        "downloaded.")
 def collect_results(survey_type, access_key, fix, limit=None, out_dir=None):
     """
+    Uses SurveyJS web API to fetch multiple survey results in JSON file format.
 
-    :param survey_type:
-    :param access_key:
-    :param out_dir:
-    :return:
+    :param survey_type: Valid values are 1 and 2.
+    :param access_key: SurveyJS access key.
+    :param fix: Question headers in some surveys contain invalid symbols that are corrected if this flag is set to True.
+    :param limit: Download first `limit` survey results.
+    :param out_dir: Where to save surveys. If does not exist, it will be created.
+    :return: None
     """
     if out_dir is not None:
         out_dir = Path(out_dir)
@@ -179,11 +185,12 @@ def collect_result(survey_id, access_key):
               help="")
 def to_csv(results_dir, out_dir):
     """
-    Converts survey results from JSON to CSV fileformat identical to the CSV downloaded from the SurveyJS website.
+    Converts survey results from JSON to CSV file format identical to the CSV downloaded from the SurveyJS website.
 
     :param results_dir: A directory with survey results in JSON format.
     :param out_dir: A directory where to save results converted into CSV format. Each new file will be named identically
     as a source JSON file.
+
     :return: None
     """
     results_dir, out_dir = Path(results_dir), Path(out_dir)
@@ -221,7 +228,9 @@ def to_csv(results_dir, out_dir):
 @click.command()
 @click.option("--survey-dir", type=click.Path(exists=False))
 @click.option("-o", "--output-dir", type=click.Path(exists=False), required=False)
-def aggregate(survey_dir, output_dir=None):
+@click.option("--final/--no-final", is_flag=True, default=False,
+              help="Remove/keep some image related columns.")
+def aggregate(survey_dir, final, output_dir=None):
     aggregated_results = None
     survey_files = Path(survey_dir).glob("*.json")
     for survey_file in survey_files:
@@ -267,15 +276,25 @@ def aggregate(survey_dir, output_dir=None):
                 elif key == "doctorID":
                     observer = answer
                 else:
-                    # print(f">>> skiping entry with id {key}.")
                     pass
             data["observer"] = [observer] * len(data["question"])
+
+            # create dataframe for loaded survey data and specify column types
             df = pd.DataFrame.from_dict(data)
+            df = df.astype({
+                'img_pair': 'string',
+                'survey': int,
+                'question': int,
+                'img1': int,
+                'img2': int,
+                'answer': int,
+                'observer': int,
+                'is_redundant': bool
+            })
 
             if aggregated_results is None:
                 aggregated_results = df
             else:
-                # print("+++++++++++++++ konkateniram!")
                 aggregated_results = pd.concat(
                     [aggregated_results, df],
                     ignore_index=True
@@ -286,30 +305,124 @@ def aggregate(survey_dir, output_dir=None):
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
+    # load image data into dataframe and specify column types
     images = pd.read_csv(output_dir / "images.csv")
-    images.drop(["type"], axis=1)
 
-    # make sure that both img1 and image_id columns are of the same type before dataframes are joined
-    aggregated_results = aggregated_results.astype(
-        {
-            'img1': 'int32',
-            'img2': 'int32',
-            "answer": "int32"
-        }
+    # images.csv might have listed both original images and segmentation masks.
+    # only segmentation masks are used in surveys, so leave just that entry type
+    images = images[images["type"] == "segmap"]
+    images = images.astype({
+        'id': int,
+        'filename': 'string',
+        'dataset': 'string',
+        'type': 'string',
+        'name': 'string'
+    })
+
+    aggregated_results = aggregated_results.merge(
+        images[["id", "filename"]], how="left", left_on="img1", right_on="id"
     )
-    images = images.astype({'id': 'int32'})
+    aggregated_results = aggregated_results.merge(
+        images[["id", "filename"]], how="left", left_on="img2", right_on="id", suffixes=("_img1", "_img2")
+    )
+    aggregated_results = aggregated_results.merge(
+        images[["id", "filename"]], how="left", left_on="answer", right_on="id"
+    )
+    aggregated_results = aggregated_results.rename(columns={
+        "filename_img1": "img1_fname",
+        "filename_img2": "img2_fname",
+        "filename": "answer_fname"
+    })
 
-    aggregated_results = aggregated_results.merge(images, how="left", left_on="img1", right_on="id")
-    aggregated_results = aggregated_results.merge(images, how="left", left_on="img2", right_on="id",
-                                                  suffixes=("_img1", "_img2"))
-    aggregated_results = aggregated_results.merge(images, how="left", left_on="answer", right_on="id")
-    aggregated_results = aggregated_results.astype({'filename': 'str'})
-    print(type(re.match(r"(\d+)-(.+)-(chase|drive|stare).png", aggregated_results["filename"]).group(2)))
-    aggregated_results["network"] = "trt"
-    aggregated_results.to_csv(output_dir / "survey2_data.csv")
+    # drop columns used to join dataframes, since they are duplicates of img1 and img2
+    # columns from a starting dataframe
+    aggregated_results = aggregated_results.drop(["id_img1", "id_img2", "id"], axis=1)
+
+    # rearrange columns so that data is easier to read
+    # aggregated_results = aggregated_results[[
+    #     "img_pair", "question", "survey", "observer", "img1", "img1_fname",
+    #     "img2", "img2_fname", "answer", "answer_fname", "is_redundant",
+    #     "network", "dataset"
+    # ]]
+
+    def get_network_name(fname):
+        m = re.match(r"(\d+)-(.*)-(laddernet|iternet|saunet|vgan|unet|iternet_uni|eswanet|vesselunet)-(chase|drive|stare).png", str(fname))
+        if m is None:
+            return "UNKNOWN"
+        else:
+            return m.group(3)
+
+    def get_dataset_name(fname):
+        m = re.match(
+            r"(\d+)-(.*)-(laddernet|iternet|saunet|vgan|unet|iternet_uni|eswanet|vesselunet)-(chase|drive|stare).png",
+            str(fname))
+        if m is None:
+            return "UNKNOWN"
+        else:
+            return m.group(4)
+
+    aggregated_results["network"] = aggregated_results["answer_fname"].apply(get_network_name)
+    aggregated_results["dataset"] = aggregated_results["answer_fname"].apply(get_dataset_name)
+
+    if final:
+        aggregated_results.drop([
+            "img1_fname", "img2_fname", "answer_fname"
+        ], axis=1, inplace=True)
+
+    aggregated_results.to_csv(output_dir / "survey_data.csv")
+
+
+@click.command()
+@click.option("-i", "--input-file", type=click.Path(exists=False),
+              help="A path to the file produced by 'aggregate' method.")
+def rank(input_file):
+
+    results = pd.read_csv(input_file)
+
+    # redundant entries are intended to be used for inter-consistency check, and are not supposed to be included
+    # in ballot counting
+    results = results[results["is_redundant"] == False]
+
+    # https://pandas.pydata.org/pandas-docs/stable/user_guide/groupby.html
+    for survey_id, group in results.groupby("survey"):
+
+        # identifiers of all images involved in comparison are in img1 and img2 columns
+        images = pd.concat([group["img1"], group["img2"]], axis=0)
+
+        # image identifiers repeats in img1 and img2 and for voting it is important to have all this identifiers appear
+        # just once
+        candidates = np.unique(images.values)
+        assert len(candidates) == 8            # one image for each of the networks
+
+        # initialize votes for each candidate
+        votes = dict()
+        for candidate in candidates:
+            votes[candidate] = 0
+
+        # count votes
+        for answer in group["answer"]:
+            votes[answer] += 1
+
+        # https://votelib.readthedocs.io/en/latest/api_docs/api_evaluate.html
+        evaluator = Copeland(second_order=True)
+        ranking = evaluator.evaluate(votes=votes, n_seats=8)
+
+        pass
+
+
+
+    # 1. load survey_data.csv
+    # 2. filter to leave just non-redundant entries
+    # 3. groupby survey id
+    # for each survey group
+    #   create unique_image pairs?
+    #   create votes dictionary and init to 0
+    #   count votes for each of the compared images
+    # copeland
 
 
 if __name__ == "__main__":
     # collect_results()
     # to_csv()
-    aggregate()
+    # aggregate()
+    rank()

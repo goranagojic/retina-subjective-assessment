@@ -1,0 +1,23 @@
+pairs - A list (?) of pairs ("segmentation_mask1", "segmentation_mask2") presented in questions
+answers - A list of strings where each string corresponds to appropriate pair in pairs.
+votes - A dictionary where key is a segmentation mask name and value number of votes for that image
+    obtained by counting of pair-wise comparisons.
+
+
+input: A list of pairs (segmentation masks) present to the doctors in questions
+output: A dictionary where each image is associated with a number of votes
+
+unique_images = GetUniqueImages(pairs)
+
+votes = {}
+for image in unique_images:
+    votes[image] = 0
+
+# each question is answered with a single answered
+# and answers are used to count votes for each image involved
+# in voting
+for pair_winner in answers:
+    votes[pair_winner] += 1
+
+ranking = CopelandVotingMethod(votes)
+    
