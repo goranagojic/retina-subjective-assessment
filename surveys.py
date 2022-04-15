@@ -1,4 +1,5 @@
 import click
+import itertools
 import json
 import re
 
@@ -8,7 +9,6 @@ import pandas as pd
 
 from string import Template
 from pathlib import Path
-from votelib.evaluate.condorcet import Copeland
 
 
 get_survey_result_template = Template("https://api.surveyjs.io/private/Surveys/getSurveyResults/$id?accessKey=$access_key")
@@ -395,30 +395,67 @@ def rank(input_file):
         assert len(candidates) == 8            # one image for each of the networks
 
         # initialize votes for each candidate
-        votes = dict()
-        for candidate in candidates:
-            votes[candidate] = 0
-
+        # votes = dict()
+        # for candidate in candidates:
+        #     votes[candidate] = 0
+        #
         # count votes
-        for answer in group["answer"]:
-            votes[answer] += 1
+        # for answer in group["answer"]:
+        #     votes[answer] += 1
+        #
+        # # https://votelib.readthedocs.io/en/latest/api_docs/api_evaluate.html
+        # evaluator = Copeland(second_order=True)
+        # ranking = evaluator.evaluate(votes=votes, n_seats=8)
 
-        # https://votelib.readthedocs.io/en/latest/api_docs/api_evaluate.html
-        evaluator = Copeland(second_order=True)
-        ranking = evaluator.evaluate(votes=votes, n_seats=8)
+        # for each of the rated images (candidates) see how they performed in pair-wise comparison
+        # by counting number of wins and losses
+        # voting_table = pd.DataFrame(columns=["candidate", "wins", "losses"])
+        # for candidate in candidates:
+        #     # series containing all winners from pair-wise comparisons (all doctors, all pairs)
+        #     answers = group["answer"]
+        #     # series containing all the answers where given image is involved
+        #     answers = answers[answers == candidate]
+        #     voting_table = voting_table.append({
+        #         "candidate": candidate,
+        #         "wins": answers.count(), # n times when candidate has won
+        #         "losses": images[images == candidate].count() - answers.count(), # all times the candidate was involved in pairwise comparisons - times when the candidate has won
+        #     }, ignore_index=True)
 
-        pass
+        ranking = pd.DataFrame({
+            "candidates": candidates,
+            "copeland_score": np.zeros(len(candidates), dtype=np.int16)
+        })
 
+        # create empty pairwise comparison table
+        candidate_pairs = [i for i in itertools.combinations(iterable=candidates, r=2)]
+        xs = [x for x, _ in candidate_pairs]
+        ys = [y for _, y in candidate_pairs]
+        pairwise_comparison = pd.DataFrame({
+            "candidate1": xs,
+            "candidate2": ys,
+            "candidate1_wins": np.zeros(len(xs), dtype=np.int16),
+            "candidate2_wins": np.zeros(len(ys), dtype=np.int16)
+        })
 
-
-    # 1. load survey_data.csv
-    # 2. filter to leave just non-redundant entries
-    # 3. groupby survey id
-    # for each survey group
-    #   create unique_image pairs?
-    #   create votes dictionary and init to 0
-    #   count votes for each of the compared images
-    # copeland
+        # populate pairwise table
+        for c1, c2 in candidate_pairs:
+            pairs = group[
+                np.logical_or(
+                    np.logical_and(group["img1"] == c1, group["img2"] == c2),
+                    np.logical_and(group["img1"] == c2, group["img2"] == c1)
+                )
+            ]
+            c1_wins = pairs[pairs["answer"] == c1].count()
+            c2_wins = pairs[pairs["answer"] == c2].count()
+            r = pairwise_comparison.loc[
+                np.logical_and(
+                    pairwise_comparison["candidate1"] == c1,
+                    pairwise_comparison["candidate2"] == c2
+                )
+            ]
+            r["candidate1_wins"] = c1_wins
+            r["candidate2_wins"] = c2_wins
+            pass
 
 
 if __name__ == "__main__":
