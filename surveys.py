@@ -228,9 +228,10 @@ def to_csv(results_dir, out_dir):
 @click.command()
 @click.option("--survey-dir", type=click.Path(exists=False))
 @click.option("-o", "--output-dir", type=click.Path(exists=False), required=False)
+@click.option("-i", "--images-filepath", type=click.Path(exists=False), required=False, default="images.csv")
 @click.option("--final/--no-final", is_flag=True, default=False,
               help="Remove/keep some image related columns.")
-def aggregate(survey_dir, final, output_dir=None):
+def aggregate(survey_dir, final, images_filepath, output_dir=None):
     aggregated_results = None
     survey_files = Path(survey_dir).glob("*.json")
     for survey_file in survey_files:
@@ -306,18 +307,18 @@ def aggregate(survey_dir, final, output_dir=None):
     output_dir.mkdir(parents=True, exist_ok=True)
 
     # load image data into dataframe and specify column types
-    images = pd.read_csv(output_dir / "images.csv")
+    images = pd.read_csv(images_filepath)
 
     # images.csv might have listed both original images and segmentation masks.
     # only segmentation masks are used in surveys, so leave just that entry type
     images = images[images["type"] == "segmap"]
-    images = images.astype({
-        'id': int,
-        'filename': 'string',
-        'dataset': 'string',
-        'type': 'string',
-        'name': 'string'
-    })
+    # images = images.astype({
+    #     'id': int,
+    #     'filename': 'string',
+    #     'dataset': 'string',
+    #     'type': 'string',
+    #     'disease_toke': 'string'
+    # })
 
     aggregated_results = aggregated_results.merge(
         images[["id", "filename"]], how="left", left_on="img1", right_on="id"
@@ -338,28 +339,21 @@ def aggregate(survey_dir, final, output_dir=None):
     # columns from a starting dataframe
     aggregated_results = aggregated_results.drop(["id_img1", "id_img2", "id"], axis=1)
 
-    # rearrange columns so that data is easier to read
-    # aggregated_results = aggregated_results[[
-    #     "img_pair", "question", "survey", "observer", "img1", "img1_fname",
-    #     "img2", "img2_fname", "answer", "answer_fname", "is_redundant",
-    #     "network", "dataset"
-    # ]]
-
     def get_network_name(fname):
-        m = re.match(r"(\d+)-(.*)-(laddernet|iternet|saunet|vgan|unet|iternet_uni|eswanet|vesselunet)-(chase|drive|stare).png", str(fname))
+        m = re.match(r"(\d+)-.*(laddernet|iternet|saunet|vgan|unet|iternet_uni|eswanet|vesselunet)-(chase|drive|stare).png", str(fname))
         if m is None:
             return "UNKNOWN"
         else:
-            return m.group(3)
+            return m.group(2)
 
     def get_dataset_name(fname):
         m = re.match(
-            r"(\d+)-(.*)-(laddernet|iternet|saunet|vgan|unet|iternet_uni|eswanet|vesselunet)-(chase|drive|stare).png",
+            r"(\d+)-.*(laddernet|iternet|saunet|vgan|unet|iternet_uni|eswanet|vesselunet)-(chase|drive|stare).png",
             str(fname))
         if m is None:
             return "UNKNOWN"
         else:
-            return m.group(4)
+            return m.group(3)
 
     aggregated_results["network"] = aggregated_results["answer_fname"].apply(get_network_name)
     aggregated_results["dataset"] = aggregated_results["answer_fname"].apply(get_dataset_name)
@@ -370,6 +364,7 @@ def aggregate(survey_dir, final, output_dir=None):
         ], axis=1, inplace=True)
 
     aggregated_results.to_csv(output_dir / "survey_data.csv")
+    print(f"Resulting file save to {output_dir / 'survey_data.csv'}")
 
 
 @click.command()
@@ -461,5 +456,5 @@ def rank(input_file):
 if __name__ == "__main__":
     # collect_results()
     # to_csv()
-    # aggregate()
-    rank()
+    aggregate()
+    # rank()
