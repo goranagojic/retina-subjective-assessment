@@ -376,6 +376,9 @@ def rank(input_file):
 
     # redundant entries are intended to be used for inter-consistency check, and are not supposed to be included
     # in ballot counting
+    # TODO when i look into aggregated data, nothing is set to True!
+      # fix that! (seems like i have compared complete img_pair strings, where i should have
+      # compared just substrings with image indices
     results = results[results["is_redundant"] == False]
 
     # https://pandas.pydata.org/pandas-docs/stable/user_guide/groupby.html
@@ -389,37 +392,11 @@ def rank(input_file):
         candidates = np.unique(images.values)
         assert len(candidates) == 8            # one image for each of the networks
 
-        # initialize votes for each candidate
-        # votes = dict()
-        # for candidate in candidates:
-        #     votes[candidate] = 0
-        #
-        # count votes
-        # for answer in group["answer"]:
-        #     votes[answer] += 1
-        #
-        # # https://votelib.readthedocs.io/en/latest/api_docs/api_evaluate.html
-        # evaluator = Copeland(second_order=True)
-        # ranking = evaluator.evaluate(votes=votes, n_seats=8)
-
-        # for each of the rated images (candidates) see how they performed in pair-wise comparison
-        # by counting number of wins and losses
-        # voting_table = pd.DataFrame(columns=["candidate", "wins", "losses"])
-        # for candidate in candidates:
-        #     # series containing all winners from pair-wise comparisons (all doctors, all pairs)
-        #     answers = group["answer"]
-        #     # series containing all the answers where given image is involved
-        #     answers = answers[answers == candidate]
-        #     voting_table = voting_table.append({
-        #         "candidate": candidate,
-        #         "wins": answers.count(), # n times when candidate has won
-        #         "losses": images[images == candidate].count() - answers.count(), # all times the candidate was involved in pairwise comparisons - times when the candidate has won
-        #     }, ignore_index=True)
-
         ranking = pd.DataFrame({
             "candidates": candidates,
             "copeland_score": np.zeros(len(candidates), dtype=np.int16)
         })
+        ranking = ranking.set_index(ranking["candidates"])
 
         # create empty pairwise comparison table
         candidate_pairs = [i for i in itertools.combinations(iterable=candidates, r=2)]
@@ -434,27 +411,45 @@ def rank(input_file):
 
         # populate pairwise table
         for c1, c2 in candidate_pairs:
+            # extract from the group all questions where candidate1 and candidate2 compete
+            # as img1 and/or img2
             pairs = group[
                 np.logical_or(
                     np.logical_and(group["img1"] == c1, group["img2"] == c2),
                     np.logical_and(group["img1"] == c2, group["img2"] == c1)
                 )
             ]
-            c1_wins = pairs[pairs["answer"] == c1].count()
-            c2_wins = pairs[pairs["answer"] == c2].count()
-            r = pairwise_comparison.loc[
+            c1_wins = len(pairs[pairs["answer"] == c1])
+            c2_wins = len(pairs[pairs["answer"] == c2])
+
+            # write win count for candidate 1
+            pairwise_comparison.at[
                 np.logical_and(
                     pairwise_comparison["candidate1"] == c1,
                     pairwise_comparison["candidate2"] == c2
-                )
-            ]
-            r["candidate1_wins"] = c1_wins
-            r["candidate2_wins"] = c2_wins
+                ), 'candidate1_wins'
+            ] = c1_wins
+
+            # write win count for candidate 2
+            pairwise_comparison.at[
+                np.logical_and(
+                    pairwise_comparison["candidate1"] == c1,
+                    pairwise_comparison["candidate2"] == c2
+                ), 'candidate2_wins'
+            ] = c2_wins
+
+            if c1_wins > c2_wins:
+                ranking.at[c1, "copeland_score"] += 1
+            elif c2_wins > c1_wins:
+                ranking.at[c2, "copeland_score"] += 1
+            else:
+                # TODO what now?!
+                pass
             pass
 
 
 if __name__ == "__main__":
     # collect_results()
     # to_csv()
-    aggregate()
-    # rank()
+    # aggregate()
+    rank()
