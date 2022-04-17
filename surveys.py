@@ -225,6 +225,24 @@ def to_csv(results_dir, out_dir):
             df.to_csv(str(survey_filepath), index=False)
 
 
+def get_network_name(fname):
+    m = re.match(r"(\d+)-.*(laddernet|iternet|saunet|vgan|unet|iternet_uni|eswanet|vesselunet)-(chase|drive|stare).png", str(fname))
+    if m is None:
+        return "UNKNOWN"
+    else:
+        return m.group(2)
+
+
+def get_dataset_name(fname):
+    m = re.match(
+        r"(\d+)-.*(laddernet|iternet|saunet|vgan|unet|iternet_uni|eswanet|vesselunet)-(chase|drive|stare).png",
+        str(fname))
+    if m is None:
+        return "UNKNOWN"
+    else:
+        return m.group(3)
+
+
 @click.command()
 @click.option("--survey-dir", type=click.Path(exists=False))
 @click.option("-o", "--output-dir", type=click.Path(exists=False), required=False)
@@ -339,22 +357,6 @@ def aggregate(survey_dir, final, images_filepath, output_dir=None):
     # columns from a starting dataframe
     aggregated_results = aggregated_results.drop(["id_img1", "id_img2", "id"], axis=1)
 
-    def get_network_name(fname):
-        m = re.match(r"(\d+)-.*(laddernet|iternet|saunet|vgan|unet|iternet_uni|eswanet|vesselunet)-(chase|drive|stare).png", str(fname))
-        if m is None:
-            return "UNKNOWN"
-        else:
-            return m.group(2)
-
-    def get_dataset_name(fname):
-        m = re.match(
-            r"(\d+)-.*(laddernet|iternet|saunet|vgan|unet|iternet_uni|eswanet|vesselunet)-(chase|drive|stare).png",
-            str(fname))
-        if m is None:
-            return "UNKNOWN"
-        else:
-            return m.group(3)
-
     aggregated_results["network"] = aggregated_results["answer_fname"].apply(get_network_name)
     aggregated_results["dataset"] = aggregated_results["answer_fname"].apply(get_dataset_name)
 
@@ -370,7 +372,8 @@ def aggregate(survey_dir, final, images_filepath, output_dir=None):
 @click.command()
 @click.option("-i", "--input-file", type=click.Path(exists=False),
               help="A path to the file produced by 'aggregate' method.")
-def rank(input_file):
+@click.option("--images-filepath", type=click.Path(exists=False), required=False)
+def rank(input_file, images_file=None):
 
     results = pd.read_csv(input_file)
 
@@ -380,6 +383,8 @@ def rank(input_file):
       # fix that! (seems like i have compared complete img_pair strings, where i should have
       # compared just substrings with image indices
     results = results[results["is_redundant"] == False]
+
+    rankings = pd.DataFrame(columns=["candidates", "copeland_score", "image", "network", "dataset"])
 
     # https://pandas.pydata.org/pandas-docs/stable/user_guide/groupby.html
     for survey_id, group in results.groupby("survey"):
@@ -410,7 +415,7 @@ def rank(input_file):
         })
 
         # populate pairwise table
-        for c1, c2 in candidate_pairs:
+        for i, c1, c2 in enumerate(candidate_pairs):
             # extract from the group all questions where candidate1 and candidate2 compete
             # as img1 and/or img2
             pairs = group[
@@ -438,6 +443,7 @@ def rank(input_file):
                 ), 'candidate2_wins'
             ] = c2_wins
 
+            # populate table with copeland ranking score
             if c1_wins > c2_wins:
                 ranking.at[c1, "copeland_score"] += 1
             elif c2_wins > c1_wins:
@@ -446,6 +452,12 @@ def rank(input_file):
                 # TODO what now?!
                 pass
             pass
+
+        images = pd.read_csv(images_file)
+        
+
+        # aggregated_results["network"] = aggregated_results["answer_fname"].apply(get_network_name)
+
 
 
 if __name__ == "__main__":
