@@ -249,9 +249,13 @@ def get_dataset_name(fname):
 @click.option("-i", "--images-filepath", type=click.Path(exists=False), required=False, default="images.csv")
 @click.option("--final/--no-final", is_flag=True, default=False,
               help="Remove/keep some image related columns.")
-def aggregate(survey_dir, final, images_filepath, output_dir=None):
+@click.option("--observer", type=str, multiple=True, default=[""], required=False,
+              help="Specify observers whose results you wish to include in the output file.")
+def aggregate(survey_dir, final, images_filepath, observer, output_dir=None):
     aggregated_results = None
     survey_files = Path(survey_dir).glob("*.json")
+
+    all_observers = set()
     for survey_file in survey_files:
         print(f"Processing file {survey_file}...")
         with open(survey_file, "r") as f:
@@ -267,8 +271,6 @@ def aggregate(survey_dir, final, images_filepath, output_dir=None):
                 "observer": list(),
                 "is_redundant": list()
             }
-
-            qrepl = lambda matchobj: "X" if ("q" in matchobj.group(1)) else matchobj.group(1)
 
             # alternative key is a key that has im1 and im2 substrings switched
             # some of the redundant questions compare same two images but in a different order
@@ -300,10 +302,11 @@ def aggregate(survey_dir, final, images_filepath, output_dir=None):
                     question_lookup.add(anonimized_key)
                     question_lookup.add(alternative_key(survey, question, img1, img2))
                 elif key == "doctorID":
-                    observer = answer
+                    obs = answer
                 else:
                     pass
-            data["observer"] = [observer] * len(data["question"])
+            data["observer"] = [obs] * len(data["question"])
+            all_observers.add(obs)
 
             # create dataframe for loaded survey data and specify column types
             df = pd.DataFrame.from_dict(data)
@@ -325,6 +328,19 @@ def aggregate(survey_dir, final, images_filepath, output_dir=None):
                     [aggregated_results, df],
                     ignore_index=True
                 )
+
+    # keep only data for the observers specified
+    # aggregated_results["network"] = aggregated_results["answer_fname"].apply(get_network_name)
+    if observer[0] == "":
+        excluded_observers = list()
+    else:
+        excluded_observers = [int(obs) for obs in set(all_observers) if obs not in observer]
+        print(f"Data associated with {excluded_observers} will be removed from further processing...")
+
+    # remove all entries not associated by specified observers
+    aggregated_results = aggregated_results.drop(
+        aggregated_results[aggregated_results["observer"].isin(excluded_observers)].index
+    )
 
     if output_dir is None:
         output_dir = survey_dir
