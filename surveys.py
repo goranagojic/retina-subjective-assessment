@@ -92,21 +92,6 @@ survey_ids = [
 ]
 
 
-@click.command()
-@click.option("--survey-type", type=int, required=False,
-              help="A survey type to collect the results for. Can have values 1 or 2. If not specified, both types are "
-                   "collected. ")
-@click.option("--access_key", type=str, required=True,
-              help="SurveyJS access key")
-@click.option("--out-dir", type=click.Path(exists=False), required=False,
-              help="")
-@click.option("--fix/--no-fix", is_flag=True, default=False,
-              help="Some surveys exibit bug in column names where survey id placeholder (^_^) is not replaced with an "
-                   "actual survey number. If the flag is set to true, placeholders are substituted with an appropriate "
-                   "survey number.")
-@click.option("--limit", type=int, required=None, help="How many surveys will be downloaded. If not specified, all "
-                                                       "surveys with identifiers stated in `survey_ids` dictionary are "
-                                                       "downloaded.")
 def collect_results(survey_type, access_key, fix, limit=None, out_dir=None):
     """
     Uses SurveyJS web API to fetch multiple survey results in JSON file format.
@@ -243,14 +228,6 @@ def get_dataset_name(fname):
         return m.group(3)
 
 
-@click.command()
-@click.option("--survey-dir", type=click.Path(exists=False))
-@click.option("-o", "--output-dir", type=click.Path(exists=False), required=False)
-@click.option("-i", "--images-filepath", type=click.Path(exists=False), required=False, default="images.csv")
-@click.option("--final/--no-final", is_flag=True, default=False,
-              help="Remove/keep some image related columns.")
-@click.option("--observer", type=str, multiple=True, default=[""], required=False,
-              help="Specify observers whose results you wish to include in the output file.")
 def aggregate(survey_dir, final, images_filepath, observer, output_dir=None):
     aggregated_results = None
     survey_files = Path(survey_dir).glob("*.json")
@@ -385,22 +362,15 @@ def aggregate(survey_dir, final, images_filepath, observer, output_dir=None):
     print(f"Resulting file save to {output_dir / 'survey_data.csv'}")
 
 
-@click.command()
-@click.option("-i", "--input-file", type=click.Path(exists=False),
-              help="A path to the file produced by 'aggregate' method.")
-@click.option("--images-file", type=click.Path(exists=False), required=False)
-def rank(input_file, images_file=None):
+def rank(input_file,  output_dir, images_file=None):
 
     results = pd.read_csv(input_file)
 
     # redundant entries are intended to be used for inter-consistency check, and are not supposed to be included
     # in ballot counting
-    # TODO when i look into aggregated data, nothing is set to True!
-      # fix that! (seems like i have compared complete img_pair strings, where i should have
-      # compared just substrings with image indices
     results = results[results["is_redundant"] == False]
 
-    rankings = pd.DataFrame(columns=["candidate", "copeland_score", "image", "network", "dataset"])
+    rankings = pd.DataFrame(columns=["candidate", "copeland_score", "image", "network", "dataset", "survey"])
 
     # https://pandas.pydata.org/pandas-docs/stable/user_guide/groupby.html
     for survey_id, group in results.groupby("survey"):
@@ -467,25 +437,22 @@ def rank(input_file, images_file=None):
             else:
                 # TODO what now?!
                 pass
-            pass
 
-        # aggregated_results = aggregated_results.merge(
-        #     images[["id", "filename"]], how="left", left_on="img2", right_on="id", suffixes=("_img1", "_img2")
-        # )
-
+        uniques = group.drop_duplicates("answer")
         ranking = ranking.reset_index(drop=True)
-        images = pd.read_csv(images_file)
         ranking = ranking.merge(
-            images[["id", "filename", "dataset", "disease_token"]], how="left", left_on="candidate", right_on="id",
+            uniques[["answer", "answer_fname", "network", "dataset", "survey"]],
+            how="left", left_on="candidate", right_on="answer"
         )
-        pass
-        
+        ranking = ranking.rename(columns={"answer_fname": "image"})
+        ranking = ranking.sort_values(by="copeland_score")
 
-        # aggregated_results["network"] = aggregated_results["answer_fname"].apply(get_network_name)
+        rankings = pd.concat([rankings, ranking], ignore_index=True)
 
+    output_dir = Path(output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    output_file = str(output_dir / "ranking.csv")
+    rankings.to_csv(output_file)
 
-if __name__ == "__main__":
-    # collect_results()
-    # to_csv()
-    aggregate()
-    # rank()
+    print(f"Rankings saved on path {output_file}...")
+
