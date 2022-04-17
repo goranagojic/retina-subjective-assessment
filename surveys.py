@@ -268,9 +268,12 @@ def aggregate(survey_dir, final, images_filepath, output_dir=None):
                 "is_redundant": list()
             }
 
+            qrepl = lambda matchobj: "X" if ("q" in matchobj.group(1)) else matchobj.group(1)
+
             # alternative key is a key that has im1 and im2 substrings switched
             # some of the redundant questions compare same two images but in a different order
-            alternative_key = lambda sid, quid, im1id, im2id: f"s{sid}-q{quid}-im{im2id}-im{im1id}-impicker"
+            # in this case, it is ok to have different question numbers
+            alternative_key = lambda sid, quid, im1id, im2id: f"s{sid}-*-im{im2id}-im{im1id}-impicker"
 
             # here will be all identifiers corresponding to questions already inserted
             # into data dictionary of a dataframe
@@ -279,6 +282,10 @@ def aggregate(survey_dir, final, images_filepath, output_dir=None):
                 # if key corresponds to a question id (e.g. s1-q17-im57-im64-impicker)
                 m = re.match(r"s(\d+)-q(\d+)-im(\d+)-im(\d+)-impicker", key)
                 if m:
+                    # just replace substring q<NUMBER> with *, since keys might differ by question number and still
+                    # represent the same image combination
+                    anonimized_key = re.sub("q[0-9]+", "*", key)
+
                     survey, question, img1, img2 = m.group(1), m.group(2), m.group(3), m.group(4)
                     data["img_pair"].append(key)
                     data["survey"].append(survey)
@@ -286,11 +293,11 @@ def aggregate(survey_dir, final, images_filepath, output_dir=None):
                     data["img1"].append(img1)
                     data["img2"].append(img2)
                     data["answer"].append(answer[2:])   # removes string im from image name
-                    if key in question_lookup:
+                    if anonimized_key in question_lookup:
                         data["is_redundant"].append(True)
                     else:
                         data["is_redundant"].append(False)
-                    question_lookup.add(key)
+                    question_lookup.add(anonimized_key)
                     question_lookup.add(alternative_key(survey, question, img1, img2))
                 elif key == "doctorID":
                     observer = answer
@@ -330,13 +337,6 @@ def aggregate(survey_dir, final, images_filepath, output_dir=None):
     # images.csv might have listed both original images and segmentation masks.
     # only segmentation masks are used in surveys, so leave just that entry type
     images = images[images["type"] == "segmap"]
-    # images = images.astype({
-    #     'id': int,
-    #     'filename': 'string',
-    #     'dataset': 'string',
-    #     'type': 'string',
-    #     'disease_toke': 'string'
-    # })
 
     aggregated_results = aggregated_results.merge(
         images[["id", "filename"]], how="left", left_on="img1", right_on="id"
@@ -372,7 +372,7 @@ def aggregate(survey_dir, final, images_filepath, output_dir=None):
 @click.command()
 @click.option("-i", "--input-file", type=click.Path(exists=False),
               help="A path to the file produced by 'aggregate' method.")
-@click.option("--images-filepath", type=click.Path(exists=False), required=False)
+@click.option("--images-file", type=click.Path(exists=False), required=False)
 def rank(input_file, images_file=None):
 
     results = pd.read_csv(input_file)
@@ -384,7 +384,7 @@ def rank(input_file, images_file=None):
       # compared just substrings with image indices
     results = results[results["is_redundant"] == False]
 
-    rankings = pd.DataFrame(columns=["candidates", "copeland_score", "image", "network", "dataset"])
+    rankings = pd.DataFrame(columns=["candidate", "copeland_score", "image", "network", "dataset"])
 
     # https://pandas.pydata.org/pandas-docs/stable/user_guide/groupby.html
     for survey_id, group in results.groupby("survey"):
@@ -398,10 +398,10 @@ def rank(input_file, images_file=None):
         assert len(candidates) == 8            # one image for each of the networks
 
         ranking = pd.DataFrame({
-            "candidates": candidates,
+            "candidate": candidates,
             "copeland_score": np.zeros(len(candidates), dtype=np.int16)
         })
-        ranking = ranking.set_index(ranking["candidates"])
+        ranking = ranking.set_index(ranking["candidate"])
 
         # create empty pairwise comparison table
         candidate_pairs = [i for i in itertools.combinations(iterable=candidates, r=2)]
@@ -415,7 +415,7 @@ def rank(input_file, images_file=None):
         })
 
         # populate pairwise table
-        for i, c1, c2 in enumerate(candidate_pairs):
+        for c1, c2 in candidate_pairs:
             # extract from the group all questions where candidate1 and candidate2 compete
             # as img1 and/or img2
             pairs = group[
@@ -453,15 +453,23 @@ def rank(input_file, images_file=None):
                 pass
             pass
 
+        # aggregated_results = aggregated_results.merge(
+        #     images[["id", "filename"]], how="left", left_on="img2", right_on="id", suffixes=("_img1", "_img2")
+        # )
+
+        ranking = ranking.reset_index(drop=True)
         images = pd.read_csv(images_file)
+        ranking = ranking.merge(
+            images[["id", "filename", "dataset", "disease_token"]], how="left", left_on="candidate", right_on="id",
+        )
+        pass
         
 
         # aggregated_results["network"] = aggregated_results["answer_fname"].apply(get_network_name)
 
 
-
 if __name__ == "__main__":
     # collect_results()
     # to_csv()
-    # aggregate()
-    rank()
+    aggregate()
+    # rank()
