@@ -211,12 +211,11 @@ def to_csv(results_dir, out_dir):
 
 
 def get_network_name(fname):
-    m = re.match(r"(\d+)-.*(laddernet|iternet|saunet|vgan|unet|iternet_uni|eswanet|vesselunet)-(chase|drive|stare).png", str(fname))
-    if m is None:
-        return "UNKNOWN"
-    else:
-        return m.group(2)
-
+    networks = ["laddernet", "iternet_uni", "iternet", "saunet", "vgan", "eswanet", "vesselunet", "unet"]
+    for network in networks:
+        if network in fname:
+            return network
+    return "UNKNOWN"
 
 
 def get_dataset_name(fname):
