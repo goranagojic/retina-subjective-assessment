@@ -12,7 +12,7 @@ from surveys import collect_results
 @click.option("--out-dir", type=click.Path(exists=False), required=False,
               help="")
 @click.option("--fix/--no-fix", is_flag=True, default=False,
-              help="Some surveys exibit bug in column names where survey id placeholder (^_^) is not replaced with an "
+              help="Some surveys exibit bug in column names where survey id placeholder (^_^) is not replaced with the "
                    "actual survey number. If the flag is set to true, placeholders are substituted with an appropriate "
                    "survey number.")
 @click.option("--limit", type=int, required=None, help="How many surveys will be downloaded. If not specified, all "

@@ -218,9 +218,10 @@ def get_network_name(fname):
         return m.group(2)
 
 
+
 def get_dataset_name(fname):
     m = re.match(
-        r"(\d+)-.*(laddernet|iternet|saunet|vgan|unet|iternet_uni|eswanet|vesselunet)-(chase|drive|stare).png",
+        r"(\d+)-.*(laddernet|iternet|saunet|vgan|iternet_uni|eswanet|vesselunet|unet)-(chase|drive|stare).png",
         str(fname))
     if m is None:
         return "UNKNOWN"
@@ -402,6 +403,8 @@ def rank(input_file,  output_dir, images_file=None):
 
         # populate pairwise table
         for c1, c2 in candidate_pairs:
+            # print(f"Calculating Copeland score for image pair {c1} and {c2}.")
+
             # extract from the group all questions where candidate1 and candidate2 compete
             # as img1 and/or img2
             pairs = group[
@@ -445,9 +448,22 @@ def rank(input_file,  output_dir, images_file=None):
             how="left", left_on="candidate", right_on="answer"
         )
         ranking = ranking.rename(columns={"answer_fname": "image"})
+        ranking = ranking.drop(['answer'], axis=1)
         ranking = ranking.sort_values(by="copeland_score")
 
         rankings = pd.concat([rankings, ranking], ignore_index=True)
+
+        # just some things to write to the console so that user can figure out what is happening
+        try:
+            image_basename = ranking["image"].iloc[0].split('-')[0]
+        except:
+            image_basename = ""
+        dataset = ranking['dataset'].iloc[0]
+        total_votes = ranking['copeland_score'].sum()
+        network_ranking = ranking['network']
+
+        print(f"Ranking for image group ({image_basename} - {dataset}) (total votes = {total_votes})")
+        print(f"Network ranking: {network_ranking}.")
 
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
