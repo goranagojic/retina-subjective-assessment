@@ -353,13 +353,17 @@ def aggregate(survey_dir, final, images_filepath, observer, output_dir=None):
     aggregated_results["network"] = aggregated_results["answer_fname"].apply(get_network_name)
     aggregated_results["dataset"] = aggregated_results["answer_fname"].apply(get_dataset_name)
 
+    survey_filename = "survey_data"
     if final:
         aggregated_results.drop([
             "img1_fname", "img2_fname", "answer_fname"
         ], axis=1, inplace=True)
+        survey_filename += "-minimal"
 
-    aggregated_results.to_csv(output_dir / "survey_data.csv")
-    print(f"Resulting file save to {output_dir / 'survey_data.csv'}")
+    survey_filename += ".csv"
+
+    aggregated_results.to_csv(output_dir / survey_filename)
+    print(f"Resulting file save to {output_dir / survey_filename}")
 
 
 def rank(input_file,  output_dir, images_file=None):
@@ -371,6 +375,11 @@ def rank(input_file,  output_dir, images_file=None):
     results = results[results["is_redundant"] == False]
 
     rankings = pd.DataFrame(columns=["candidate", "copeland_score", "image", "network", "dataset", "survey"])
+    rankings = rankings.astype({
+        "candidate": np.int16,
+        "copeland_score": np.float16,
+        "survey": np.int16
+    })
 
     # https://pandas.pydata.org/pandas-docs/stable/user_guide/groupby.html
     for survey_id, group in results.groupby("survey"):
@@ -385,7 +394,7 @@ def rank(input_file,  output_dir, images_file=None):
 
         ranking = pd.DataFrame({
             "candidate": candidates,
-            "copeland_score": np.zeros(len(candidates), dtype=np.int16)
+            "copeland_score": np.zeros(len(candidates), dtype=np.float16)
         })
         ranking = ranking.set_index(ranking["candidate"])
 
@@ -437,9 +446,15 @@ def rank(input_file,  output_dir, images_file=None):
             elif c2_wins > c1_wins:
                 ranking.at[c2, "copeland_score"] += 1
             else:
+                ranking.at[c1, "copeland_score"] += 0.5
+                ranking.at[c2, "copeland_score"] += 0.5
                 # TODO what now?!
                 pass
 
+        # if some image is selected by none of the doctors, then it will appear in ranking with score
+        # 0 and no other cells populated (such as network name etc.)
+        # luckily, there are just a few entries like this so it is easy to manually correct this once ranking file is
+        # produced
         uniques = group.drop_duplicates("answer")
         ranking = ranking.reset_index(drop=True)
         ranking = ranking.merge(
@@ -454,20 +469,50 @@ def rank(input_file,  output_dir, images_file=None):
 
         # just some things to write to the console so that user can figure out what is happening
         try:
-            image_basename = ranking["image"].iloc[0].split('-')[0]
+            image_basename = ranking["image"].iloc[1].split('-')[0]
         except:
             image_basename = ""
-        dataset = ranking['dataset'].iloc[0]
+        dataset = ranking['dataset'].iloc[1]
         total_votes = ranking['copeland_score'].sum()
-        network_ranking = ranking['network']
+        network_ranking = ranking[['copeland_score', 'network']]
 
+        if total_votes != 28:
+            print("ALARM GÉNÉRALE!!!")
         print(f"Ranking for image group ({image_basename} - {dataset}) (total votes = {total_votes})")
-        print(f"Network ranking: {network_ranking}.")
+        print(f"Network ranking:\n{network_ranking}.")
 
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
     output_file = str(output_dir / "ranking.csv")
+
     rankings.to_csv(output_file)
 
     print(f"Rankings saved on path {output_file}...")
 
+
+def fix_aggregate(survey_data_s1, survey_data_s2, out=None):
+    """
+    This function exists because I mistakenly assumed that I will have all data necessary to compute results in a single
+    master file. However, because my surveys were split into two series, there were two master files. That means that
+    for the first series of surveys (the first 17) I have to use one master file to merge question/image ids with, and
+    for the second series (from 18 till the end) I have to use the other master file. Consequently, I will have two
+    output files with results that have to be merged latter in order to compute Copeland score. So, this script does
+    exactly that - it merges two survey data files.
+
+    :param survey_data_s1: The path to the merged results for surveys of series 1.
+    :param survey_data_s2: The path to the merged results for surveys of series 2.
+    :param out: The path to the file produced by merging survey_data_s1 and survey_data_s2.
+    :return: Pandas DataFrame of the merged input files.
+    """
+    data1, data2 = pd.read_csv(survey_data_s1), pd.read_csv(survey_data_s2)
+    result = pd.concat([data2, data1], ignore_index=True)
+
+    if out is not None:
+        out = Path(out)
+        if out.parent.exists():
+            result.to_csv(out)
+        else:
+            print(f"The output will not be saved to path {out}, because it seems that directory {out.parent} "
+                  f"does not exist.")
+
+    return result
