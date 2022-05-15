@@ -290,6 +290,3 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/windows,linux,pycharm,python
-
-# added by gorana 16.12.
-data/
