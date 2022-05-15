@@ -1,0 +1,826 @@
+Ranking for image group (000017 - drive) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+3             0.0   vesselunet
+7             1.0  iternet_uni
+1             2.0      iternet
+0             3.0         vgan
+2             5.0       saunet
+4             5.0      eswanet
+5             6.0    laddernet
+6             6.0         unet.
+Ranking for image group (000021 - drive) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+1             0.0   vesselunet
+0             3.0         vgan
+3             3.0      eswanet
+7             3.0  iternet_uni
+2             4.0    laddernet
+4             5.0         unet
+5             5.0       saunet
+6             5.0      iternet.
+Ranking for image group (000594 - drive) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+0             0.0   vesselunet
+3             1.0         vgan
+1             3.0    laddernet
+4             4.0         unet
+2             5.0       saunet
+5             5.0      iternet
+6             5.0  iternet_uni
+7             5.0      eswanet.
+Ranking for image group (001771 - drive) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+3             0.0   vesselunet
+0             3.0  iternet_uni
+2             3.0    laddernet
+5             3.0       saunet
+7             3.0         unet
+4             5.0      eswanet
+6             5.0      iternet
+1             6.0         vgan.
+Ranking for image group (003597 - drive) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+5             0.0   vesselunet
+1             3.0       saunet
+4             3.0    laddernet
+6             3.0      eswanet
+7             3.0         vgan
+0             5.0  iternet_uni
+3             5.0         unet
+2             6.0      iternet.
+Ranking for image group (003945 - drive) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+6             0.0   vesselunet
+4             2.0    laddernet
+2             3.0         vgan
+7             3.0       saunet
+3             4.0         unet
+1             5.0  iternet_uni
+5             5.0      iternet
+0             6.0      eswanet.
+Ranking for image group (000001 - stare) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+0             0.0      iternet
+4             1.0         vgan
+7             2.0       saunet
+5             3.0         unet
+1             4.0  iternet_uni
+2             5.0    laddernet
+6             6.0      eswanet
+3             7.0   vesselunet.
+Ranking for image group (000257 - stare) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+3             0.0      iternet
+1             1.0       saunet
+0             3.0         vgan
+5             3.0         unet
+6             4.0      eswanet
+2             5.0  iternet_uni
+4             5.0    laddernet
+7             7.0   vesselunet.
+Ranking for image group (000278 - stare) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+2             1.0         vgan
+0             3.0  iternet_uni
+1             3.0   vesselunet
+3             3.0    laddernet
+5             3.0       saunet
+4             4.0         unet
+6             4.0      eswanet
+7             7.0      iternet.
+Ranking for image group (000291 - stare) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+3             0.0       saunet
+1             1.0         unet
+0             3.0      iternet
+7             3.0         vgan
+5             4.0    laddernet
+2             5.0      eswanet
+4             5.0   vesselunet
+6             7.0  iternet_uni.
+Ranking for image group (000520 - stare) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+4             1.0      iternet
+5             1.0       saunet
+1             4.0   vesselunet
+3             4.0         vgan
+6             4.0  iternet_uni
+7             4.0      eswanet
+0             5.0         unet
+2             5.0    laddernet.
+Ranking for image group (001533 - stare) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+0             0.0      iternet
+6             1.0       saunet
+1             2.0         unet
+5             4.0    laddernet
+7             4.0   vesselunet
+2             5.0      eswanet
+3             6.0         vgan
+4             6.0  iternet_uni.
+Ranking for image group (000000 - chase) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+7             0.0  iternet_uni
+6             1.0      iternet
+0             3.0   vesselunet
+5             3.0       saunet
+1             5.0    laddernet
+3             5.0      eswanet
+4             5.0         unet
+2             6.0         vgan.
+Ranking for image group (000005 - chase) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+4             0.0  iternet_uni
+6             1.0      iternet
+1             4.0   vesselunet
+2             4.0      eswanet
+7             4.0    laddernet
+0             5.0         vgan
+3             5.0       saunet
+5             5.0         unet.
+Ranking for image group (000007 - chase) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+1             0.0      iternet
+4             1.0  iternet_uni
+0             2.0    laddernet
+2             4.0         vgan
+3             4.0      eswanet
+5             4.0         unet
+7             6.0       saunet
+6             7.0   vesselunet.
+Ranking for image group (001219 - chase) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+6             0.0  iternet_uni
+2             1.0      iternet
+0             2.0      eswanet
+3             4.0    laddernet
+4             4.0         unet
+1             5.0   vesselunet
+5             6.0         vgan
+7             6.0       saunet.
+Ranking for image group (002391 - chase) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+5             0.0  iternet_uni
+3             1.0      iternet
+6             3.0   vesselunet
+7             3.0         unet
+2             4.0    laddernet
+0             5.0      eswanet
+4             5.0       saunet
+1             7.0         vgan.
+Ranking for image group (000762 - chase) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+3             0.0  iternet_uni
+1             1.0      iternet
+0             4.0       saunet
+2             4.0         unet
+4             4.0   vesselunet
+5             4.0      eswanet
+6             5.0         vgan
+7             6.0    laddernet.
+Ranking for image group (000002 - chase) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+1             0.0  iternet_uni
+4             1.0      iternet
+3             2.0         vgan
+0             4.0         unet
+2             5.0    laddernet
+5             5.0       saunet
+7             5.0      eswanet
+6             6.0   vesselunet.
+Ranking for image group (002381 - chase) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+0             1.0   vesselunet
+5             1.0      iternet
+6             1.0  iternet_uni
+3             3.0    laddernet
+1             5.0         vgan
+7             5.0         unet
+2             6.0      eswanet
+4             6.0       saunet.
+Ranking for image group (002401 - chase) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+6             1.0  iternet_uni
+1             2.0      iternet
+0             3.0   vesselunet
+2             3.0       saunet
+3             4.0         unet
+7             4.0    laddernet
+4             5.0      eswanet
+5             6.0         vgan.
+Ranking for image group (003569 - chase) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+1             0.0  iternet_uni
+7             1.0      iternet
+2             2.0       saunet
+0             3.0         unet
+3             4.0   vesselunet
+4             5.0         vgan
+5             6.0    laddernet
+6             7.0      eswanet.
+Ranking for image group (000004 - chase) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+6             0.0  iternet_uni
+7             1.0      iternet
+0             2.0         vgan
+1             4.0       saunet
+2             4.0   vesselunet
+3             5.0    laddernet
+4             6.0         unet
+5             6.0      eswanet.
+Ranking for image group (000001 - chase) (total votes = 28.0)
+Network ranking:
+   copeland_score     network
+0             0.0 iternet_uni
+5             1.0     iternet
+1             3.0      saunet
+2             3.0        unet
+4             3.0  vesselunet
+3             5.0     eswanet
+6             6.0        vgan
+7             7.0   laddernet.
+Ranking for image group (001094 - chase) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+0             0.0  iternet_uni
+2             1.0      iternet
+3             2.0         unet
+4             3.0   vesselunet
+7             4.0       saunet
+6             5.0      eswanet
+5             6.0    laddernet
+1             7.0         vgan.
+Ranking for image group (000007 - chase) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+4             2.0  iternet_uni
+0             3.0       saunet
+3             3.0      eswanet
+5             3.0         unet
+7             3.0    laddernet
+2             4.0   vesselunet
+6             4.0      iternet
+1             6.0         vgan.
+Ranking for image group (000006 - chase) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+3             0.0      iternet
+5             1.0  iternet_uni
+1             3.0         unet
+6             3.0      eswanet
+7             4.0    laddernet
+0             5.0         vgan
+2             5.0   vesselunet
+4             7.0       saunet.
+Ranking for image group (002391 - chase) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+0             0.0  iternet_uni
+1             2.0         unet
+2             2.0    laddernet
+5             2.0      iternet
+3             5.0         vgan
+4             5.0       saunet
+6             6.0      eswanet
+7             6.0   vesselunet.
+Ranking for image group (002361 - chase) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+6             0.0  iternet_uni
+3             1.0      iternet
+0             3.0      eswanet
+1             3.0    laddernet
+2             4.0         vgan
+4             5.0       saunet
+7             5.0   vesselunet
+5             7.0         unet.
+Ranking for image group (002405 - chase) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+3             0.0  iternet_uni
+5             1.0      iternet
+0             3.0   vesselunet
+2             3.0    laddernet
+4             3.0         unet
+1             6.0      eswanet
+6             6.0         vgan
+7             6.0       saunet.
+Ranking for image group (002379 - chase) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+6             0.0  iternet_uni
+7             2.0      iternet
+0             3.0   vesselunet
+3             3.0      eswanet
+5             3.0    laddernet
+2             5.0         vgan
+1             6.0         unet
+4             6.0       saunet.
+Ranking for image group (003131 - chase) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+6             0.0  iternet_uni
+0             1.0      iternet
+2             2.0   vesselunet
+4             3.0         unet
+1             5.0       saunet
+3             5.0      eswanet
+5             6.0    laddernet
+7             6.0         vgan.
+Ranking for image group (001187 - chase) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+7             0.0  iternet_uni
+4             1.0      iternet
+6             3.0    laddernet
+1             4.0      eswanet
+3             4.5         vgan
+5             4.5         unet
+2             5.0   vesselunet
+0             6.0       saunet.
+Ranking for image group (000000 - chase) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+5             0.0  iternet_uni
+4             1.0      iternet
+0             4.0       saunet
+2             4.0      eswanet
+7             4.0    laddernet
+1             5.0   vesselunet
+3             5.0         unet
+6             5.0         vgan.
+Ranking for image group (002363 - chase) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+1             0.0  iternet_uni
+5             1.0      iternet
+4             3.0         unet
+0             4.0      eswanet
+3             4.0   vesselunet
+2             5.0       saunet
+6             5.0         vgan
+7             6.0    laddernet.
+Ranking for image group (001691 - chase) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+3             0.0  iternet_uni
+0             1.0      iternet
+1             4.0         unet
+2             4.0       saunet
+4             4.0      eswanet
+5             4.0   vesselunet
+7             5.0    laddernet
+6             6.0         vgan.
+Ranking for image group (000003 - chase) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+6             0.0  iternet_uni
+7             2.0      iternet
+0             3.0      eswanet
+1             3.0         vgan
+3             4.0   vesselunet
+2             5.0       saunet
+4             5.0         unet
+5             6.0    laddernet.
+Ranking for image group (001189 - chase) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+2             0.0  iternet_uni
+0             1.0      iternet
+3             2.0       saunet
+1             3.0         unet
+4             5.0         vgan
+6             5.0      eswanet
+5             6.0    laddernet
+7             6.0   vesselunet.
+Ranking for image group (001185 - chase) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+1             0.0  iternet_uni
+2             1.0         unet
+5             3.0      iternet
+0             4.0         vgan
+3             4.0       saunet
+4             4.0    laddernet
+6             6.0      eswanet
+7             6.0   vesselunet.
+Ranking for image group (001197 - chase) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+3             0.0  iternet_uni
+6             1.0      iternet
+4             3.0   vesselunet
+5             3.0       saunet
+0             4.0         vgan
+1             5.0      eswanet
+2             6.0    laddernet
+7             6.0         unet.
+Ranking for image group (001202 - chase) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+0             0.0  iternet_uni
+5             1.0      iternet
+3             3.0    laddernet
+1             4.0         vgan
+7             4.0   vesselunet
+4             5.0         unet
+6             5.0      eswanet
+2             6.0       saunet.
+Ranking for image group (003552 - chase) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+3             0.0  iternet_uni
+4             1.0      iternet
+0             3.0         unet
+1             4.0    laddernet
+2             4.0   vesselunet
+6             4.0       saunet
+5             6.0         vgan
+7             6.0      eswanet.
+Ranking for image group (002745 - drive) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+7             0.0   vesselunet
+1             2.0      iternet
+0             3.0  iternet_uni
+5             4.0      eswanet
+6             4.0       saunet
+2             5.0         vgan
+3             5.0    laddernet
+4             5.0         unet.
+Ranking for image group (002680 - drive) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+5             0.0   vesselunet
+4             1.0       saunet
+1             2.0  iternet_uni
+3             4.0    laddernet
+7             4.0         vgan
+0             5.0      iternet
+6             5.0         unet
+2             7.0      eswanet.
+Ranking for image group (000819 - drive) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+5             0.0   vesselunet
+1             1.0       saunet
+7             2.0         unet
+0             4.0      eswanet
+3             5.0    laddernet
+4             5.0  iternet_uni
+6             5.0      iternet
+2             6.0         vgan.
+Ranking for image group (002764 - drive) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+0             0.0   vesselunet
+4             3.0  iternet_uni
+5             3.0       saunet
+1             4.0      iternet
+3             4.0         vgan
+6             4.0         unet
+2             5.0      eswanet
+7             5.0    laddernet.
+Ranking for image group (003944 - drive) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+3             0.0   vesselunet
+6             1.0       saunet
+5             2.0      eswanet
+0             3.0  iternet_uni
+7             4.0      iternet
+4             5.0         vgan
+2             6.0         unet
+1             7.0    laddernet.
+Ranking for image group (000633 - drive) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+5             0.0   vesselunet
+0             3.0         unet
+1             3.0         vgan
+2             3.0  iternet_uni
+3             3.0      iternet
+4             5.0       saunet
+6             5.0    laddernet
+7             6.0      eswanet.
+Ranking for image group (000348 - drive) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+4             0.0   vesselunet
+0             1.0         unet
+1             3.0  iternet_uni
+2             3.0    laddernet
+3             5.0      eswanet
+5             5.0      iternet
+6             5.0         vgan
+7             6.0       saunet.
+Ranking for image group (004036 - drive) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+7             0.0   vesselunet
+3             3.0      iternet
+5             3.0       saunet
+6             3.0         unet
+0             4.0      eswanet
+2             4.0         vgan
+4             5.0  iternet_uni
+1             6.0    laddernet.
+Ranking for image group (000613 - drive) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+5             0.0   vesselunet
+6             1.0         unet
+7             2.0       saunet
+3             3.0  iternet_uni
+0             4.0      iternet
+1             6.0         vgan
+2             6.0      eswanet
+4             6.0    laddernet.
+Ranking for image group (003945 - drive) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+1             0.0   vesselunet
+5             1.0       saunet
+6             3.0         vgan
+2             4.0  iternet_uni
+3             4.0         unet
+0             5.0      eswanet
+7             5.0      iternet
+4             6.0    laddernet.
+Ranking for image group (005077 - drive) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+0             0.0   vesselunet
+7             2.0       saunet
+1             3.0  iternet_uni
+6             3.0      iternet
+5             4.0      eswanet
+2             5.0         unet
+4             5.0         vgan
+3             6.0    laddernet.
+Ranking for image group (000001 - drive) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+2             0.0   vesselunet
+0             1.0  iternet_uni
+3             2.0         vgan
+7             3.0      iternet
+1             5.0       saunet
+5             5.0         unet
+4             6.0    laddernet
+6             6.0      eswanet.
+Ranking for image group (003537 - drive) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+1             0.0   vesselunet
+3             1.0       saunet
+5             3.0    laddernet
+7             3.0      iternet
+6             4.0         unet
+0             5.0  iternet_uni
+2             5.0      eswanet
+4             7.0         vgan.
+Ranking for image group (000000 - drive) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+2             0.0   vesselunet
+0             2.0    laddernet
+1             3.0      iternet
+3             3.0      eswanet
+6             4.0  iternet_uni
+4             5.0       saunet
+5             5.0         unet
+7             6.0         vgan.
+Ranking for image group (005050 - drive) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+2             0.0   vesselunet
+0             1.0  iternet_uni
+1             3.0         vgan
+3             3.0      eswanet
+4             4.0    laddernet
+5             5.0       saunet
+6             6.0         unet
+7             6.0      iternet.
+Ranking for image group (005078 - drive) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+1             0.0   vesselunet
+0             1.0       saunet
+3             2.0      iternet
+2             4.0    laddernet
+4             4.0         unet
+5             5.0  iternet_uni
+6             5.0         vgan
+7             7.0      eswanet.
+Ranking for image group (002367 - drive) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+5             0.0   vesselunet
+3             1.0         unet
+7             2.0       saunet
+1             4.0      iternet
+6             4.0    laddernet
+0             5.0  iternet_uni
+2             6.0         vgan
+4             6.0      eswanet.
+Ranking for image group (004776 - drive) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+1             0.0   vesselunet
+0             1.0       saunet
+3             2.0      iternet
+4             4.0         vgan
+2             5.0    laddernet
+5             5.0  iternet_uni
+6             5.0      eswanet
+7             6.0         unet.
+Ranking for image group (001614 - drive) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+7             0.0   vesselunet
+3             2.0       saunet
+4             2.0         unet
+0             4.0  iternet_uni
+1             4.0      eswanet
+6             4.0    laddernet
+5             5.0         vgan
+2             7.0      iternet.
+Ranking for image group (001304 - drive) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+6             0.0   vesselunet
+1             3.0         unet
+7             3.0  iternet_uni
+3             4.0         vgan
+4             4.0    laddernet
+5             4.0      eswanet
+0             5.0       saunet
+2             5.0      iternet.
+Ranking for image group (005118 - drive) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+2             0.0   vesselunet
+3             2.0      eswanet
+5             3.0      iternet
+6             3.0       saunet
+1             4.0         vgan
+0             5.0         unet
+4             5.0  iternet_uni
+7             6.0    laddernet.
+Ranking for image group (003597 - drive) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+0             0.0   vesselunet
+1             2.0         unet
+3             2.0       saunet
+4             3.0         vgan
+2             4.0      eswanet
+5             5.0  iternet_uni
+6             6.0      iternet
+7             6.0    laddernet.
+Ranking for image group (001210 - drive) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+6             0.0   vesselunet
+0             1.0  iternet_uni
+1             2.0       saunet
+2             4.0         unet
+4             4.0    laddernet
+3             5.0      eswanet
+7             5.0         vgan
+5             7.0      iternet.
+Ranking for image group (001194 - drive) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+4             0.0   vesselunet
+0             2.0  iternet_uni
+5             2.0         unet
+2             3.0       saunet
+1             4.0    laddernet
+3             4.0      eswanet
+6             6.0      iternet
+7             7.0         vgan.
+Ranking for image group (003553 - drive) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+1             0.0   vesselunet
+0             1.0      eswanet
+4             2.0         unet
+3             4.0      iternet
+5             4.0       saunet
+2             5.0         vgan
+6             6.0  iternet_uni
+7             6.0    laddernet.
+Ranking for image group (002409 - drive) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+5             0.0   vesselunet
+1             2.0       saunet
+0             3.0      eswanet
+3             3.0         unet
+2             5.0  iternet_uni
+4             5.0    laddernet
+6             5.0      iternet
+7             5.0         vgan.
+Ranking for image group (002354 - drive) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+3             0.0   vesselunet
+1             2.0         unet
+0             3.0      eswanet
+4             3.0    laddernet
+2             4.0      iternet
+7             4.0  iternet_uni
+5             6.0         vgan
+6             6.0       saunet.
+Ranking for image group (004111 - drive) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+4             0.0   vesselunet
+0             1.0         unet
+2             2.0      iternet
+1             4.0  iternet_uni
+5             4.0         vgan
+7             5.0       saunet
+3             6.0      eswanet
+6             6.0    laddernet.
+Ranking for image group (003654 - drive) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+4             0.0   vesselunet
+0             2.0      iternet
+1             2.0       saunet
+2             3.0         unet
+3             4.0    laddernet
+5             5.0  iternet_uni
+6             6.0      eswanet
+7             6.0         vgan.
+Ranking for image group (001549 - drive) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+4             0.0   vesselunet
+1             3.0      iternet
+3             3.0         unet
+5             3.0  iternet_uni
+0             4.0         vgan
+2             4.0    laddernet
+6             5.0      eswanet
+7             6.0       saunet.
+Ranking for image group (003522 - drive) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+5             0.0   vesselunet
+0             1.0  iternet_uni
+1             3.0         vgan
+2             3.0      iternet
+3             3.0       saunet
+4             5.0    laddernet
+7             6.0         unet
+6             7.0      eswanet.
+Ranking for image group (004264 - drive) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+4             0.0   vesselunet
+0             3.0      eswanet
+7             3.0  iternet_uni
+1             4.0       saunet
+3             4.0      iternet
+6             4.0         unet
+2             5.0         vgan
+5             5.0    laddernet.
+Ranking for image group (002670 - drive) (total votes = 28.0)
+Network ranking:
+   copeland_score      network
+1             0.0   vesselunet
+0             1.0       saunet
+2             2.0         unet
+3             4.0      iternet
+5             4.0         vgan
+4             5.0  iternet_uni
+6             6.0    laddernet
+7             6.0      eswanet.
+Rankings saved on path ../data/survey2/ranking.csv...
