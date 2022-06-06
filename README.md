@@ -97,3 +97,7 @@ python scripts/run_rank.py \
     --output-dir data/survey2
 ```
 The output is stored on `output-dir` path in `ranking.csv` file.
+
+Here is a pseudoalgorithm describing the process of calculating Copeland score from survey data.
+
+![Copeland score pseudoalgorithm](miscellanious/copeland_score_pseudoalgorithm.png)
