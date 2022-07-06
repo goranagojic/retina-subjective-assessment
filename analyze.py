@@ -87,11 +87,11 @@ def plot(type, input_file, output_dir, show):
 
 
 @analyze.command()
-@click.option("--input-file", type=click.Path(exists=True),
+@click.option("-i", "--input-file", type=click.Path(exists=True),
               help="A CSV file with aggregated survey data. For survey type 1 it must "
                    "have columns 'correct' of type boolean and 'certainty' of integer type since "
                    "these columns are used to calculate grading score.")
-@click.option("--output-file", type=click.Path(exists=False),
+@click.option("-o", "--output-file", type=click.Path(exists=False),
               help="Where to save data with grading scores.")
 def calculate_scores(input_file, output_file):
     """Calculates integer grading scores for pairs (answer correctness, certainty).
@@ -142,4 +142,7 @@ def calculate_stats(input_file):
 commands = click.CommandCollection(sources=[analyze])
 
 if __name__ == '__main__':
-    analyze()
+    # analyze()
+    # calculate_stats()
+    # calculate_scores()
+    plot()

@@ -28,7 +28,56 @@ conda activate retinasubjassesspy38
 ``` 
 
 ## Survey type 1 support
-TODO
+
+
+### Aggregate survey results
+Use command:
+```bash
+python aggregate.py \
+    --survey-dir data/survey1/surveys/json/ \
+    --master-fp data/survey1/master.csv \
+    --out-fp data/survey1/aggregated-results.csv \
+    --aggregate-diabetic-retinopathy
+```
+Parameters:
+- `--survey-dir` A directory where to find survey results in JSON file format exported from SurveyJS.
+- `--master-fp` A master file. The file contain information on which question is associated with which survey and 
+fundus image.
+- `--out-fp` A path to the output file where aggregated results will be saved. In aggregated results each answered question
+ is associated with groundtruth answer.
+- `--aggregate-diabetic-retinopathy` If set, diagnoses of diabetic retinopathy and background diabetic retinopathy are 
+
+For comprehensive list of options, invoke the script with `-h` option.
+
+### Calculate grades
+Use command:
+```bash
+python analyze.py \
+    -i data/survey1/aggregated-results.csv \
+    -o data/survey1/graded-results.csv
+```
+Parameters:
+- `-i` A path to the file with aggregated results. See bellow for file format.
+- `-o` A path to the output file.
+
+For comprehensive list of options, invoke the script with `-h` option.
+
+### Generate plots
+Use command:
+```bash
+python analyze.py \
+    -t histogram \
+    -i data/survey1/graded-results.csv \
+    -o data/survey1/plots
+```
+Parameters:
+- `-t` Specify plot type to be generated. Currently, boxplots and histograms are supported.
+- `-i` A path to the master file with grading information. This file is obtained as an output of calculate grades 
+command stated above.
+- `-o` A path to the directory where plots will be stored. If does not exist, the directory will be created before 
+plots are saved.
+
+For comprehensive list of options, invoke the script with `-h` option.
 
 ## Survey type 2 support
 Type 2 surveys ask the participants to rank eight segmentation masks for one fundus image from the best 

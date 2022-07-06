@@ -12,9 +12,10 @@ import pandas as pd
               help="Path to a directory containing json survey results.")
 @click.option('--master-fp', type=click.Path(exists=True), required=True, help="Path to a master file.")
 @click.option('--out-fp', type=click.Path(exists=False), required=True, help="Where to save a resulting file.")
-@click.option('--aggregate-dr', is_flag=True, help="diabetic_retinopathy and background_diabetic_retinopathy will be "
-                                                   "treated as a same disease in the resulting file.")
-def aggregate(survey_dir, master_fp, out_fp, aggregate_dr):
+@click.option('--aggregate-diabetic-retinopathy', is_flag=True, help="diabetic_retinopathy and "
+                                                                     "background_diabetic_retinopathy will be treated "
+                                                                     "as a same disease in the resulting file.")
+def aggregate(survey_dir, master_fp, out_fp, aggregate_diabetic_retinopathy):
     """
     Aggregate all survey results into one omnipotent file with groundtruth information.
 
@@ -28,7 +29,7 @@ def aggregate(survey_dir, master_fp, out_fp, aggregate_dr):
     """
     print(">> Aggregating results data...")
 
-    if aggregate_dr:
+    if aggregate_diabetic_retinopathy:
         print(">> An option to treat equally 'background_diabetic_retinopathy' and 'diabetic_retionopathy' is ENABLED.")
 
     input_path: Path = Path(survey_dir)
@@ -94,7 +95,7 @@ def aggregate(survey_dir, master_fp, out_fp, aggregate_dr):
                         # it seems that background_diabetic_retinopathy is subtype or a synonym for diabetic_retinopathy
                         # this is not verified at the moment, but this code piece is here to account on possibility that
                         # these two disease types should be treated as one
-                        if aggregate_dr:
+                        if aggregate_diabetic_retinopathy:
                             correct_answers = ["diabetic_retinopathy" if a == "background_diabetic_retinopathy" else a
                                                for a in correct_answers]
                             our_answer = "diabetic_retinopathy" \
