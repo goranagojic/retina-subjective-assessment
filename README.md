@@ -28,10 +28,18 @@ conda activate retinasubjassesspy38
 ``` 
 
 ## Survey type 1 support
+![image](./docs/github-survey1-pipeline.png) 
+The whole pipeline to generate file with final graded results from survey results can be run by the following command:
+```bash
+python scripts/survey1/run_aggregate.py \
+  --survey-dir data/survey1/surveys/json/ \
+  --master-fp data/survey1/master.csv \
+  --out-fp data/survey1/graded-results.csv \
+  --aggregate-diabetic-retinopathy
+```
 
-
-### Aggregate survey results
-Use command:
+For more flexibility, each step in a pipeline can be run separately. Command to aggregate separate survey results into 
+a single file with groundtruth data from master file.
 ```bash
 python aggregate.py \
     --survey-dir data/survey1/surveys/json/ \
@@ -49,8 +57,7 @@ fundus image.
 
 For comprehensive list of options, invoke the script with `-h` option.
 
-### Calculate grades
-Use command:
+To calculate grades based on answer correctness and confidence use command;
 ```bash
 python analyze.py \
     -i data/survey1/aggregated-results.csv \

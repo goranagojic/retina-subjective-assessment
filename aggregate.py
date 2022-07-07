@@ -7,14 +7,14 @@ import click
 import pandas as pd
 
 
-@click.command()
-@click.option('--survey-dir', type=click.Path(exists=True), required=True,
-              help="Path to a directory containing json survey results.")
-@click.option('--master-fp', type=click.Path(exists=True), required=True, help="Path to a master file.")
-@click.option('--out-fp', type=click.Path(exists=False), required=True, help="Where to save a resulting file.")
-@click.option('--aggregate-diabetic-retinopathy', is_flag=True, help="diabetic_retinopathy and "
-                                                                     "background_diabetic_retinopathy will be treated "
-                                                                     "as a same disease in the resulting file.")
+# @click.command()
+# @click.option('--survey-dir', type=click.Path(exists=True), required=True,
+#               help="Path to a directory containing json survey results.")
+# @click.option('--master-fp', type=click.Path(exists=True), required=True, help="Path to a master file.")
+# @click.option('--out-fp', type=click.Path(exists=False), required=True, help="Where to save a resulting file.")
+# @click.option('--aggregate-diabetic-retinopathy', is_flag=True, help="diabetic_retinopathy and "
+#                                                                      "background_diabetic_retinopathy will be treated "
+#                                                                      "as a same disease in the resulting file.")
 def aggregate(survey_dir, master_fp, out_fp, aggregate_diabetic_retinopathy):
     """
     Aggregate all survey results into one omnipotent file with groundtruth information.
