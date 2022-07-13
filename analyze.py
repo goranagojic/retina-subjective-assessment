@@ -9,15 +9,36 @@ def _grade_stats(data, column):
     print(data.groupby([column, 'grading_score']).size())
 
 
-def export_data(boxplot_data, out):
+def export_data(boxplot, out, xtickmapping=None, ytickmapping=None):
+
+    xticklabels, yticklabels = None, None
+    if xtickmapping is not None:
+        xticklabels = [xtick.label.get_text() for xtick in boxplot.ax.axes.xaxis.majorTicks]
+    if ytickmapping is not None:
+        yticklabels = [ytick.label.get_text() for ytick in boxplot.ax.axes.yaxis.majorTicks]
+
+    quartiles = boxplot[1]
+
     with open(out, "w") as f:
-        for i in range(0, len(boxplot_data["boxes"])):
-            lower_whisker_bound = boxplot_data["caps"][2 * i].get_ydata()[0]
-            lower_box_bound = boxplot_data["boxes"][i].get_ydata()[0]
-            median = boxplot_data["medians"][i].get_ydata()[0]
-            upper_box_bound = boxplot_data["boxes"][i].get_ydata()[2]
-            upper_whisker_bound = boxplot_data["caps"][2 * i + 1].get_ydata()[1]
+        for i in range(0, len(quartiles["boxes"])):
+            # for every box there are two caps meaning that for each boxplot two
+            # consecutive caps are needed (boxes[0] matches caps[0] and caps[1])
+            lower_whisker_bound = quartiles["caps"][2 * i].get_ydata()[0]
+            lower_box_bound = quartiles["boxes"][i].get_ydata()[0]
+            median = quartiles["medians"][i].get_ydata()[0]
+            upper_box_bound = quartiles["boxes"][i].get_ydata()[2]
+            upper_whisker_bound = quartiles["caps"][2 * i + 1].get_ydata()[1]
             f.write(f"{i} {lower_whisker_bound} {lower_box_bound} {median} {upper_box_bound} {upper_whisker_bound}\n")
+
+    if xticklabels is not None or yticklabels is not None:
+        out_dir, out_filename = out.parent, out.stem
+        with open(out_dir / f"{out_filename}-ticklabels.dat", "w") as fticks:
+            if xticklabels is not None:
+                mappings = [xtickmapping[xtl] for xtl in xticklabels if xtl in xtickmapping]
+                fticks.write(f"xticklabels: {mappings}\n")
+            if yticklabels is not None:
+                mappings = [ytickmapping[ytl] for ytl in yticklabels if ytl in ytickmapping]
+                fticks.write(f"yticklabels: {mappings}\n")
 
 
 @click.group()
@@ -58,7 +79,18 @@ def plot(type, input_file, output_dir, show):
 
     if type == "boxplot":
         r = data.boxplot(by=['network'], column=['grading_score'], grid=False, rot=45, return_type='both')
-        export_data(boxplot_data=r[0][1], out=output_dir / "networks.dat")
+        export_data(
+            boxplot=r[0],
+            out=output_dir / "networks.dat",
+            xtickmapping={
+                "eswanet": "ESWANet",
+                "iternet": "IterNet",
+                "iternet_uni": "IterNet_UNI",
+                "vesselunet": "DBUNet",
+                "laddernet": "LadderNet",
+                "vgan": "RVSGAN"
+            }
+        )
     else:
         data.hist(by='network', column='grading_score', grid=True,
                   bins=[-120, -100, -80, -60, -40, -20, 0, 20, 40, 60, 80, 100, 120])
@@ -66,7 +98,14 @@ def plot(type, input_file, output_dir, show):
 
     if type == "boxplot":
         r = data.boxplot(by=['dataset'], column=['grading_score'], grid=False, rot=45, return_type='both')
-        export_data(boxplot_data=r[0][1], out=output_dir / "dataset.dat")
+        export_data(
+            boxplot=r[0],
+            out=output_dir / "dataset.dat",
+            xtickmapping={
+                'drive': "DRIVE",
+                'stare': "STARE"
+            }
+        )
     else:
         data.hist(by='dataset', column='grading_score', grid=True,
                   bins=[-120, -100, -80, -60, -40, -20, 0, 20, 40, 60, 80, 100, 120])
@@ -74,12 +113,26 @@ def plot(type, input_file, output_dir, show):
 
     if type == "boxplot":
         r = data.boxplot(by=['network', 'dataset'], column=['grading_score'], grid=False, rot=45, return_type='both')
-        export_data(boxplot_data=r[0][1], out=output_dir / "network-dataset.dat")
+        export_data(
+            boxplot=r[0],
+            out=output_dir / "network-dataset.dat",
+        )
         plt.savefig(str(output_dir / "network-dataset.png"), dpi=600)
 
     if type == "boxplot":
         r = data.boxplot(by=['doctorID'], column=['grading_score'], grid=False, rot=45, return_type='both')
-        export_data(boxplot_data=r[0][1], out=output_dir / "doctorID.dat")
+        export_data(
+            boxplot=r[0],
+            out=output_dir / "doctor_id.dat",
+            xtickmapping={
+                "1": "Expert 1",
+                "2": "Expert 2",
+                "3": "Expert 3",
+                "4": "Expert 4",
+                "5": "Expert 5",
+                "6": "Expert 6"
+            }
+        )
     else:
         data.hist(by=['doctorID'], column=['grading_score'], xrot=45,
                   bins=[-120, -100, -80, -60, -40, -20, 0, 20, 40, 60, 80, 100, 120])
@@ -88,19 +141,19 @@ def plot(type, input_file, output_dir, show):
     if type == "boxplot":
         r = data.boxplot(by=['doctorID', 'dataset'], column=['grading_score'], grid=False, rot=45, figsize=(9.67, 8),
                          return_type='both')
-        export_data(boxplot_data=r[0][1], out=output_dir / "doctorID-dataset.dat")
+        export_data(boxplot=r[0], out=output_dir / "doctor_id-dataset.dat")
         plt.savefig(str(output_dir / "doctor-dataset.png"), dpi=600)
 
     if type == "boxplot":
         r = data.boxplot(by=['doctorID', 'network'], column=['grading_score'], grid=False, rot=90, figsize=(11, 8),
                          return_type='both')
-        export_data(boxplot_data=r[0][1], out=output_dir / "doctorID-network.dat")
+        export_data(boxplot=r[0], out=output_dir / "doctorID-network.dat")
         plt.savefig(str(output_dir / "doctor-network.png"), dpi=600)
 
     if type == "boxplot":
         r = data.boxplot(by=['imageName'], column=['grading_score'], rot=90, grid=False, figsize=(15, 10),
                          return_type='both')
-        export_data(boxplot_data=r[0][1], out=output_dir / "images.dat")
+        export_data(boxplot=r[0], out=output_dir / "images.dat")
         plt.savefig(str(output_dir / "images.png"), dpi=600)
 
     if show is True:
