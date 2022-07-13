@@ -9,6 +9,17 @@ def _grade_stats(data, column):
     print(data.groupby([column, 'grading_score']).size())
 
 
+def export_data(boxplot_data, out):
+    with open(out, "w") as f:
+        for i in range(0, len(boxplot_data["boxes"])):
+            lower_whisker_bound = boxplot_data["caps"][2 * i].get_ydata()[0]
+            lower_box_bound = boxplot_data["boxes"][i].get_ydata()[0]
+            median = boxplot_data["medians"][i].get_ydata()[0]
+            upper_box_bound = boxplot_data["boxes"][i].get_ydata()[2]
+            upper_whisker_bound = boxplot_data["caps"][2 * i + 1].get_ydata()[1]
+            f.write(f"{i} {lower_whisker_bound} {lower_box_bound} {median} {upper_box_bound} {upper_whisker_bound}\n")
+
+
 @click.group()
 def analyze():
     pass
@@ -38,7 +49,7 @@ def plot(type, input_file, output_dir, show):
     Plots are saved to `output_dir` path. They can be optionally shown in runtime using -s flag.
     """
 
-    # create output directory if does not exist
+    # if it does not exist, create directory where plots will be stored
     output_dir = Path(output_dir)
     output_dir.mkdir(exist_ok=True, parents=True)
 
@@ -46,41 +57,51 @@ def plot(type, input_file, output_dir, show):
     data = data[data['surveyType'] == 'regular']    # do not use data from control surveys
 
     if type == "boxplot":
-        data.boxplot(by=['network'], column=['grading_score'], grid=False, rot=45)
+        r = data.boxplot(by=['network'], column=['grading_score'], grid=False, rot=45, return_type='both')
+        export_data(boxplot_data=r[0][1], out=output_dir / "networks.dat")
     else:
         data.hist(by='network', column='grading_score', grid=True,
                   bins=[-120, -100, -80, -60, -40, -20, 0, 20, 40, 60, 80, 100, 120])
-    plt.savefig(str(output_dir / "network.png"), dpi=300)
+    plt.savefig(str(output_dir / "networks.png"), dpi=600)
 
     if type == "boxplot":
-        data.boxplot(by=['dataset'], column=['grading_score'], grid=False, rot=45)
+        r = data.boxplot(by=['dataset'], column=['grading_score'], grid=False, rot=45, return_type='both')
+        export_data(boxplot_data=r[0][1], out=output_dir / "dataset.dat")
     else:
         data.hist(by='dataset', column='grading_score', grid=True,
                   bins=[-120, -100, -80, -60, -40, -20, 0, 20, 40, 60, 80, 100, 120])
-    plt.savefig(str(output_dir / "dataset.png"), dpi=300)
+    plt.savefig(str(output_dir / "dataset.png"), dpi=600)
 
     if type == "boxplot":
-        data.boxplot(by=['network', 'dataset'], column=['grading_score'], grid=False, rot=45)
-        plt.savefig(str(output_dir / "network-dataset.png"), dpi=300)
+        r = data.boxplot(by=['network', 'dataset'], column=['grading_score'], grid=False, rot=45, return_type='both')
+        export_data(boxplot_data=r[0][1], out=output_dir / "network-dataset.dat")
+        plt.savefig(str(output_dir / "network-dataset.png"), dpi=600)
 
     if type == "boxplot":
-        data.boxplot(by=['doctorID'], column=['grading_score'], grid=False, rot=45)
+        r = data.boxplot(by=['doctorID'], column=['grading_score'], grid=False, rot=45, return_type='both')
+        export_data(boxplot_data=r[0][1], out=output_dir / "doctorID.dat")
     else:
         data.hist(by=['doctorID'], column=['grading_score'], xrot=45,
                   bins=[-120, -100, -80, -60, -40, -20, 0, 20, 40, 60, 80, 100, 120])
-    plt.savefig(str(output_dir / "doctor.png"), dpi=300)
+    plt.savefig(str(output_dir / "doctor.png"), dpi=600)
 
     if type == "boxplot":
-        data.boxplot(by=['doctorID', 'dataset'], column=['grading_score'], grid=False, rot=45, figsize=(9.67, 8))
-        plt.savefig(str(output_dir / "doctor-dataset.png"), dpi=300)
+        r = data.boxplot(by=['doctorID', 'dataset'], column=['grading_score'], grid=False, rot=45, figsize=(9.67, 8),
+                         return_type='both')
+        export_data(boxplot_data=r[0][1], out=output_dir / "doctorID-dataset.dat")
+        plt.savefig(str(output_dir / "doctor-dataset.png"), dpi=600)
 
     if type == "boxplot":
-        data.boxplot(by=['doctorID', 'network'], column=['grading_score'], grid=False, rot=90, figsize=(11, 8))
-        plt.savefig(str(output_dir / "doctor-network.png"), dpi=300)
+        r = data.boxplot(by=['doctorID', 'network'], column=['grading_score'], grid=False, rot=90, figsize=(11, 8),
+                         return_type='both')
+        export_data(boxplot_data=r[0][1], out=output_dir / "doctorID-network.dat")
+        plt.savefig(str(output_dir / "doctor-network.png"), dpi=600)
 
     if type == "boxplot":
-        data.boxplot(by=['imageName'], column=['grading_score'], rot=90, grid=False, figsize=(15, 10))
-        plt.savefig(str(output_dir / "images.png"), dpi=300)
+        r = data.boxplot(by=['imageName'], column=['grading_score'], rot=90, grid=False, figsize=(15, 10),
+                         return_type='both')
+        export_data(boxplot_data=r[0][1], out=output_dir / "images.dat")
+        plt.savefig(str(output_dir / "images.png"), dpi=600)
 
     if show is True:
         plt.show()
