@@ -126,6 +126,7 @@ def aggregate(survey_dir, master_fp, out_fp, aggregate_diabetic_retinopathy):
 
                 df = pd.DataFrame(alterations)
                 output = pd.concat([output, df])
+                alterations.clear()
 
     output.to_csv(out_fp, index=False)
     print(output)
