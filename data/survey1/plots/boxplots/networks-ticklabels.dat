@@ -1,0 +1,2 @@
+xticklabels: ['ESWANet', 'IterNet', 'IterNet_UNI', 'LadderNet', 'DBUNet', 'RVSGAN']
+yticklabels: ['', '']
